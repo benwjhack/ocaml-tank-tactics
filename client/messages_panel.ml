@@ -1,6 +1,6 @@
 open! Core
 open! Bonsai_web
-open Bonsai_chat_open_source_common
+open Tank_tactics_common
 open Bonsai.Let_syntax
 
 let view_message { Message.room = _; author; contents } =

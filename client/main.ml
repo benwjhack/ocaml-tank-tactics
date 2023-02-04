@@ -2,7 +2,7 @@ open! Core
 open! Async_kernel
 open! Bonsai_web
 open Async_js
-open Bonsai_chat_open_source_common
+open Tank_tactics_common
 open Composition_infix
 
 let run_refresh_rooms ~conn ~rooms_list_var =

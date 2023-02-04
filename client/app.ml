@@ -1,6 +1,6 @@
 open! Core
 open! Bonsai_web
-open Bonsai_chat_open_source_common
+open Tank_tactics_common
 
 let component ~room_list ~current_room ~messages ~refresh_rooms ~change_room ~send_message
   =

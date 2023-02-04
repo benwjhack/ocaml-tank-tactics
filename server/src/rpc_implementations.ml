@@ -1,6 +1,6 @@
 open! Core
 open! Async
-open Bonsai_chat_open_source_common
+open Tank_tactics_common
 
 let message_stream global_state =
   let bus_read = Bus.read_only global_state.Global_state.message_bus in

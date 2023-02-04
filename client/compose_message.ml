@@ -10,9 +10,9 @@ let build_result send_message (textbox_content, set_textbox_content) =
       String.equal
         "Enter"
         (key##.code
-         |> Js_of_ocaml.Js.Optdef.to_option
-         |> Option.value_exn
-         |> Js_of_ocaml.Js.to_string)
+        |> Js_of_ocaml.Js.Optdef.to_option
+        |> Option.value_exn
+        |> Js_of_ocaml.Js.to_string)
     in
     Vdom.Attr.on_keypress (fun key ->
       if is_key_ret key then submit_and_then_clear else Vdom.Effect.Ignore)
@@ -20,7 +20,7 @@ let build_result send_message (textbox_content, set_textbox_content) =
   let on_input = Vdom.Attr.on_input (fun _ -> set_textbox_content) in
   let value = Vdom.Attr.string_property "value" textbox_content in
   let text_input =
-    (Vdom.Node.input_deprecated [@alert "-deprecated"])
+    Vdom.Node.input
       ~attr:(Vdom.Attr.many [ on_ret; on_input; value ])
       [ Vdom.Node.text "submit" ]
   in
@@ -34,6 +34,7 @@ let component ~send_message =
   let open Bonsai.Let_syntax in
   let%sub textbox_state =
     Bonsai.state_machine0
+      [%here]
       (module String)
       (module String)
       ~default_model:""

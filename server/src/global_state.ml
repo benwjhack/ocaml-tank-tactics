@@ -1,6 +1,6 @@
 open! Core
 open! Async
-open Bonsai_chat_open_source_common
+open Tank_tactics_common
 
 type t =
   { message_bus : (Message.t -> unit) Bus.Read_write.t
@@ -9,7 +9,7 @@ type t =
 
 let create () =
   let message_bus =
-    Bus.create_exn
+    Bus.create
       [%here]
       Arity1
       ~on_subscription_after_first_write:Allow

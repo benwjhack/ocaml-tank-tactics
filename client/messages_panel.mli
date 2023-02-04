@@ -1,6 +1,6 @@
 open! Core
 open! Bonsai_web
-open Bonsai_chat_open_source_common
+open Tank_tactics_common
 
 val component
   :  messages:Message.t list Value.t

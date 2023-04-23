@@ -5,6 +5,7 @@ open Tank_tactics_common
 type t =
   { message_bus : (Message.t -> unit) Bus.Read_write.t
   ; messages : Message.t Queue.t Room.Table.t
+  ; board : Board.t ref
   }
 
 let create () =
@@ -36,5 +37,5 @@ let create () =
       ; Room.of_string "bonsai-room", Queue.of_list initial_messages
       ]
   in
-  { message_bus; messages }
+  { message_bus; messages; board = ref { Board.tiles = [] } }
 ;;

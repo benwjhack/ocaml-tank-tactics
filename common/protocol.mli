@@ -13,6 +13,10 @@ module Send_message : sig
   val t : (Message.t, unit Or_error.t) Rpc.Rpc.t
 end
 
+module Send_username : sig
+  val t : (Username.t, unit Or_error.t) Rpc.Rpc.t
+end
+
 module Create_room : sig
   val t : (Room.t, unit Or_error.t) Rpc.Rpc.t
 end

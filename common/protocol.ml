@@ -33,6 +33,16 @@ module Send_message = struct
   ;;
 end
 
+module Send_username = struct
+  let t =
+    Rpc.Rpc.create
+      ~name:"send_username"
+      ~version:0
+      ~bin_query:[%bin_type_class: Username.t]
+      ~bin_response:[%bin_type_class: unit Or_error.t]
+  ;;
+end
+
 module Create_room = struct
   let t =
     Rpc.Rpc.create

@@ -22,7 +22,7 @@ let send_message global_state =
   let messages = global_state.Global_state.messages in
   let bus = global_state.Global_state.message_bus in
   let f user_state message =
-    let author = user_state.User_state.user in
+    let author = !(user_state.User_state.user) in
     let message = { message with Message.author } in
     let room = Message.room message in
     match Hashtbl.find messages room with
@@ -45,6 +45,13 @@ let create_room global_state =
   Rpc.Rpc.implement Protocol.Create_room.t f
 ;;
 
+let send_username =
+  let f user_state username =
+    user_state.User_state.user := username.Username.contents
+    ; Deferred.Or_error.return ()
+  in 
+  Rpc.Rpc.implement Protocol.Send_username.t f
+
 let list_rooms global_state =
   let messages = global_state.Global_state.messages in
   let f _user_state () = return (Hashtbl.keys messages) in
@@ -59,6 +66,7 @@ let implementations global_state =
       ; send_message global_state
       ; create_room global_state
       ; list_rooms global_state
+      ; send_username
       ]
     ~on_unknown_rpc:`Continue
 ;;

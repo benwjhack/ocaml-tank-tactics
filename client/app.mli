@@ -9,4 +9,5 @@ val component
   -> refresh_rooms:unit Effect.t
   -> change_room:(Room.t -> unit Effect.t)
   -> send_message:(room:Room.t -> contents:string -> unit Effect.t)
+  -> send_username:(contents:string -> unit Effect.t)
   -> Vdom.Node.t Computation.t

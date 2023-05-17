@@ -2,12 +2,17 @@ open! Core
 open! Bonsai_web
 open Tank_tactics_common
 
-let component ~room_list ~current_room ~messages ~refresh_rooms ~change_room ~send_message
+let component ~room_list ~current_room ~messages ~refresh_rooms ~change_room ~send_message ~send_username
   =
   let open Bonsai.Let_syntax in
   let%sub send_message =
     match%arr current_room with
     | Some room -> fun contents -> send_message ~room ~contents
+    | None -> Fn.const Effect.never
+in
+  let%sub send_username =
+    match%arr current_room with
+    | Some _room -> fun contents -> send_username ~contents
     | None -> Fn.const Effect.never
   in
   let%sub current_room =
@@ -16,14 +21,16 @@ let component ~room_list ~current_room ~messages ~refresh_rooms ~change_room ~se
   let%sub rooms_list = Room_list_panel.component ~room_list ~refresh_rooms ~change_room in
   let%sub compose_panel = Compose_message.component ~send_message in
   let%sub messages_panel = Messages_panel.component ~messages ~current_room in
+  let%sub username_panel = Compose_username.component ~send_username in 
   let%arr rooms_list = rooms_list
   and compose_panel = compose_panel
-  and messages_panel = messages_panel in
+  and messages_panel = messages_panel
+  and username_panel = username_panel in
   Vdom.Node.div
     ~attr:(Vdom.Attr.id "container")
     [ rooms_list
     ; Vdom.Node.div
         ~attr:(Vdom.Attr.id "message-container")
-        [ messages_panel; compose_panel ]
+        [ messages_panel; compose_panel; username_panel ]
     ]
 ;;

@@ -2,7 +2,7 @@ open! Core
 open! Async
 
 let initialize_connection _initiated_from _addr _inet connection =
-  { User_state.user = "sample-username"; connection }
+  { User_state.user = ref "sample-username"; connection }
 ;;
 
 let respond_string ~content_type ?flush ?headers ?status s =

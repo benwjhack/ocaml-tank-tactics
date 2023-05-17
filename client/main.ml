@@ -39,13 +39,7 @@ let process_message_stream ~conn ~room_state_var =
 
 let send_message ~conn =
   let obfuscate message =
-    String.hash message
-    |> Int.to_string
-    |> Js_of_ocaml.Js.string
-    |> (fun x -> Js_of_ocaml.Dom_html.window##btoa x)
-    |> Js_of_ocaml.Js.to_string
-    |> String.lowercase
-    |> String.filter ~f:Char.is_alpha
+    "The message \"" ^ message ^ "\" hashes to itself surrounded by this explanatory text"
   in
   let dispatch =
     Rpc.Rpc.dispatch_exn Protocol.Send_message.t conn
@@ -57,6 +51,19 @@ let send_message ~conn =
   fun ~room ~contents ->
     let contents = obfuscate contents in
     dispatch { Message.room; contents; author = "" }
+;;
+
+let send_username ~conn =
+  let dispatch =
+    Rpc.Rpc.dispatch_exn Protocol.Send_username.t conn
+    |> Effect.of_deferred_fun
+    >> Effect.bind ~f:(function
+      | Ok a -> Effect.return a
+      | Error _ -> Effect.Ignore)
+  in
+  fun ~contents ->
+    let contents = contents in
+    dispatch { contents; author = "" }
 ;;
 
 let change_room ~conn ~room_state_var =
@@ -78,6 +85,7 @@ let run () =
   let change_room = change_room ~conn ~room_state_var in
   let refresh_rooms = refresh_rooms ~conn ~rooms_list_var in
   let send_message = send_message ~conn in
+  let send_username = send_username ~conn in
   let (_ : _ Start.Handle.t) =
     Start.start
       Start.Result_spec.just_the_view
@@ -89,7 +97,8 @@ let run () =
          ~messages:(Room_state.messages <$> Bonsai.Var.value room_state_var)
          ~refresh_rooms
          ~change_room
-         ~send_message)
+         ~send_message
+         ~send_username)
   in
   don't_wait_for (run_refresh_rooms ~conn ~rooms_list_var);
   don't_wait_for (process_message_stream ~conn ~room_state_var);

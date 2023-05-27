@@ -9,4 +9,5 @@ end
 
 type t [@@deriving sexp, bin_io]
 
+val default : t
 val tile_at : x:int -> y:int -> t -> Tile.t option

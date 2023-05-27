@@ -6,7 +6,7 @@ module Message_stream : sig
 end
 
 module Messages_request : sig
-  val t : (Room.t, Message.t list) Rpc.Rpc.t
+  val t : (Room_name.t, Message.t list) Rpc.Rpc.t
 end
 
 module Send_message : sig
@@ -18,9 +18,9 @@ module Send_username : sig
 end
 
 module Create_room : sig
-  val t : (Room.t, unit Or_error.t) Rpc.Rpc.t
+  val t : (Room_name.t, unit Or_error.t) Rpc.Rpc.t
 end
 
 module List_rooms : sig
-  val t : (unit, Room.t list) Rpc.Rpc.t
+  val t : (unit, Room_name.t list) Rpc.Rpc.t
 end

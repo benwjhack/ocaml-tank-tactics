@@ -17,10 +17,10 @@ let refresh_rooms ~conn ~rooms_list_var =
   dispatch ()
 ;;
 
-module Room_state = struct
+module Room_name_state = struct
   type t =
     { messages : Message.t list
-    ; current_room : Room.t option
+    ; current_room : Room_name.t option
     }
   [@@deriving fields]
 end
@@ -30,8 +30,8 @@ let process_message_stream ~conn ~room_state_var =
   Pipe.iter pipe ~f:(fun message ->
     Bonsai.Var.update
       room_state_var
-      ~f:(fun ({ Room_state.messages; current_room } as prev) ->
-        if [%equal: Room.t option] current_room (Some message.room)
+      ~f:(fun ({ Room_name_state.messages; current_room } as prev) ->
+        if [%equal: Room_name.t option] current_room (Some message.room)
         then { prev with messages = List.append messages [ message ] }
         else prev);
     Deferred.unit)
@@ -69,7 +69,7 @@ let send_username ~conn =
 let change_room ~conn ~room_state_var =
   let on_room_switch room =
     let%map messages = Rpc.Rpc.dispatch_exn Protocol.Messages_request.t conn room in
-    Bonsai.Var.set room_state_var { Room_state.messages; current_room = Some room }
+    Bonsai.Var.set room_state_var { Room_name_state.messages; current_room = Some room }
   in
   let dispatch = on_room_switch |> Effect.of_deferred_fun in
   fun room -> dispatch room
@@ -80,7 +80,7 @@ let run () =
   let%bind conn = Rpc.Connection.client_exn () in
   let rooms_list_var = Bonsai.Var.create [] in
   let room_state_var =
-    Bonsai.Var.create { Room_state.messages = []; current_room = None }
+    Bonsai.Var.create { Room_name_state.messages = []; current_room = None }
   in
   let change_room = change_room ~conn ~room_state_var in
   let refresh_rooms = refresh_rooms ~conn ~rooms_list_var in
@@ -93,8 +93,8 @@ let run () =
       (let open Bonsai.Let_syntax in
        App.component
          ~room_list:(Bonsai.Var.value rooms_list_var)
-         ~current_room:(Room_state.current_room <$> Bonsai.Var.value room_state_var)
-         ~messages:(Room_state.messages <$> Bonsai.Var.value room_state_var)
+         ~current_room:(Room_name_state.current_room <$> Bonsai.Var.value room_state_var)
+         ~messages:(Room_name_state.messages <$> Bonsai.Var.value room_state_var)
          ~refresh_rooms
          ~change_room
          ~send_message

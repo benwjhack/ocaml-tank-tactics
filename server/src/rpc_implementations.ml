@@ -9,7 +9,7 @@ let message_stream global_state =
 ;;
 
 let message_request global_state =
-  let messages = global_state.Global_state.messages in
+  let messages = Global_state.messages global_state in
   let f _user_state room =
     match Hashtbl.find messages room with
     | None -> return []
@@ -19,7 +19,7 @@ let message_request global_state =
 ;;
 
 let send_message global_state =
-  let messages = global_state.Global_state.messages in
+  let messages = Global_state.messages global_state in
   let bus = global_state.Global_state.message_bus in
   let f user_state message =
     let author = !(user_state.User_state.user) in
@@ -30,30 +30,32 @@ let send_message global_state =
       Queue.enqueue messages message;
       Bus.write bus message;
       Deferred.Or_error.return ()
-    | None -> Deferred.Or_error.error_s [%message "room not found" (room : Room.t)]
+    | None -> Deferred.Or_error.error_s [%message "room not found" (room : Room_name.t)]
   in
   Rpc.Rpc.implement Protocol.Send_message.t f
 ;;
 
 let create_room global_state =
-  let messages = global_state.Global_state.messages in
+  let messages = Global_state.messages global_state in
   let f _user_state room =
     match Hashtbl.add messages ~key:room ~data:(Queue.create ()) with
     | `Ok -> Deferred.Or_error.return ()
-    | `Duplicate -> Deferred.Or_error.error_s [%message "duplicate room" (room : Room.t)]
+    | `Duplicate ->
+      Deferred.Or_error.error_s [%message "duplicate room" (room : Room_name.t)]
   in
   Rpc.Rpc.implement Protocol.Create_room.t f
 ;;
 
 let send_username =
   let f user_state username =
-    user_state.User_state.user := username.Username.contents
-    ; Deferred.Or_error.return ()
-  in 
+    user_state.User_state.user := username.Username.contents;
+    Deferred.Or_error.return ()
+  in
   Rpc.Rpc.implement Protocol.Send_username.t f
+;;
 
 let list_rooms global_state =
-  let messages = global_state.Global_state.messages in
+  let messages = Global_state.messages global_state in
   let f _user_state () = return (Hashtbl.keys messages) in
   Rpc.Rpc.implement Protocol.List_rooms.t f
 ;;

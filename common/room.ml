@@ -1,8 +1,15 @@
 open! Core
 
-include
-  String_id.Make
-    (struct
-      let module_name = "Bonsai_chat_common.Room"
-    end)
-    ()
+module Internals = struct
+  type t = { messages : Message.t Queue.t } [@@deriving fields]
+
+  let create = Fields.create
+end
+
+type t =
+  { internals : Internals.t
+  ; board : Board.t
+  }
+[@@deriving fields]
+
+let create = Fields.create

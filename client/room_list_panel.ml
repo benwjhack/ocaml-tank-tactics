@@ -7,7 +7,7 @@ let component ~room_list ~refresh_rooms ~change_room =
   let%arr room_list = room_list in
   let room_header =
     Vdom.Node.h2
-      [ Vdom.Node.text "Rooms"
+      [ Vdom.Node.text "Room_names"
       ; Vdom_input_widgets.Button.simple
           ~extra_attrs:[ Vdom.Attr.id "refresh-button" ]
           ~on_click:(fun () -> refresh_rooms)
@@ -18,7 +18,7 @@ let component ~room_list ~refresh_rooms ~change_room =
     List.map room_list ~f:(fun room ->
       Vdom_input_widgets.Button.simple
         ~on_click:(fun () -> change_room room)
-        (Room.to_string room))
+        (Room_name.to_string room))
   in
   Vdom.Node.div
     ~attr:(Vdom.Attr.id "room-list-panel")

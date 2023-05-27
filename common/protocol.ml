@@ -18,7 +18,7 @@ module Messages_request = struct
     Rpc.Rpc.create
       ~name:"get_messages"
       ~version:0
-      ~bin_query:[%bin_type_class: Room.t]
+      ~bin_query:[%bin_type_class: Room_name.t]
       ~bin_response:[%bin_type_class: Message.t List.t]
   ;;
 end
@@ -48,7 +48,7 @@ module Create_room = struct
     Rpc.Rpc.create
       ~name:"create_room"
       ~version:0
-      ~bin_query:[%bin_type_class: Room.t]
+      ~bin_query:[%bin_type_class: Room_name.t]
       ~bin_response:[%bin_type_class: unit Or_error.t]
   ;;
 end
@@ -59,6 +59,6 @@ module List_rooms = struct
       ~name:"list_rooms"
       ~version:0
       ~bin_query:[%bin_type_class: unit]
-      ~bin_response:[%bin_type_class: Room.t List.t]
+      ~bin_response:[%bin_type_class: Room_name.t List.t]
   ;;
 end

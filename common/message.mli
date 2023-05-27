@@ -1,7 +1,7 @@
 open! Core
 
 type t =
-  { room : Room.t
+  { room : Room_name.t
   ; author : string
   ; contents : string
   }

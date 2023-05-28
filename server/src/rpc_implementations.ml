@@ -56,14 +56,14 @@ let send_username =
 
 let list_rooms global_state =
   let rooms = Global_state.rooms global_state in
-  let f _user_state () = return (Hashtbl.keys rooms) in
+  let f _user_state () =
+    return
+      (rooms
+       |> Hashtbl.map ~f:Room.externals
+       |> Hashtbl.to_alist
+       |> Room_name.Map.of_alist_exn)
+  in
   Rpc.Rpc.implement Protocol.List_rooms.t f
-;;
-
-let list_boards global_state =
-  let boards = Global_state.boards global_state in
-  let f _user_state () = return boards in
-  Rpc.Rpc.implement Protocol.List_boards.t f
 ;;
 
 let implementations global_state =
@@ -75,7 +75,6 @@ let implementations global_state =
       ; create_room global_state
       ; list_rooms global_state
       ; send_username
-      ; list_boards global_state
       ]
     ~on_unknown_rpc:`Continue
 ;;

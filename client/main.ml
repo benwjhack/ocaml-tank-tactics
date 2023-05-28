@@ -7,11 +7,13 @@ open Composition_infix
 
 let run_refresh_rooms ~conn ~rooms_list_var =
   let%map rooms = Rpc.Rpc.dispatch_exn Protocol.List_rooms.t conn () in
+  let rooms = Map.keys rooms in
   Bonsai.Var.set rooms_list_var rooms
 ;;
 
 let run_refresh_boards ~conn ~boards_list_var =
-  let%map boards = Rpc.Rpc.dispatch_exn Protocol.List_boards.t conn () in
+  let%map rooms = Rpc.Rpc.dispatch_exn Protocol.List_rooms.t conn () in
+  let boards = Map.map ~f:Room.Externals.board rooms in
   Bonsai.Var.set boards_list_var boards
 ;;
 
@@ -84,7 +86,7 @@ let run () =
   Async_js.init ();
   let%bind conn = Rpc.Connection.client_exn () in
   let rooms_list_var = Bonsai.Var.create [] in
-  let boards_list_var = Bonsai.Var.create (Room_name.Table.create ()) in
+  let boards_list_var = Bonsai.Var.create Room_name.Map.empty in
   let room_state_var =
     Bonsai.Var.create { Room_name_state.messages = []; current_room = None }
   in

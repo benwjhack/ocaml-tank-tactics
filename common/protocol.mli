@@ -22,9 +22,5 @@ module Create_room : sig
 end
 
 module List_rooms : sig
-  val t : (unit, Room_name.t list) Rpc.Rpc.t
-end
-
-module List_boards : sig
-  val t : (unit, Board.t Room_name.Table.t) Rpc.Rpc.t
+  val t : (unit, Room.Externals.t Room_name.Map.t) Rpc.Rpc.t
 end

@@ -7,7 +7,7 @@ module Internals = struct
 end
 
 module Externals = struct
-  type t = { board : Board.t } [@@deriving fields, sexp_of]
+  type t = { board : Board.t } [@@deriving fields, sexp_of, bin_io]
 
   let create = Fields.create
 end

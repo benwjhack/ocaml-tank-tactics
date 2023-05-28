@@ -30,7 +30,7 @@ let component
   let%sub board =
     let%arr current_room = current_room
     and board_list = board_list in
-    Room_name.Table.find board_list current_room |> Option.value ~default:Board.empty
+    Room_name.Map.find board_list current_room |> Option.value ~default:Board.empty
   in
   let%sub rooms_list = Room_list_panel.component ~room_list ~refresh_rooms ~change_room in
   let%sub compose_panel = Compose_message.component ~send_message in

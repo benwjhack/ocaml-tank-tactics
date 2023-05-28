@@ -99,6 +99,7 @@ let run () =
       (let open Bonsai.Let_syntax in
        App.component
          ~room_list:(Bonsai.Var.value rooms_list_var)
+         ~board_list:(Bonsai.Var.value boards_list_var)
          ~current_room:(Room_name_state.current_room <$> Bonsai.Var.value room_state_var)
          ~messages:(Room_name_state.messages <$> Bonsai.Var.value room_state_var)
          ~refresh_rooms

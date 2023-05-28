@@ -4,6 +4,7 @@ open Tank_tactics_common
 
 let component
   ~room_list
+  ~board_list
   ~current_room
   ~messages
   ~refresh_rooms
@@ -23,12 +24,17 @@ let component
     | None -> Fn.const Effect.never
   in
   let%sub current_room =
-    return
-      (current_room >>| Option.value ~default:(Room_name.of_string "no room selected"))
+    let%arr current_room = current_room in
+    Option.value current_room ~default:(Room_name.of_string "no room selected")
+  in
+  let%sub board =
+    let%arr current_room = current_room
+    and board_list = board_list in
+    Room_name.Table.find board_list current_room |> Option.value ~default:Board.empty
   in
   let%sub rooms_list = Room_list_panel.component ~room_list ~refresh_rooms ~change_room in
   let%sub compose_panel = Compose_message.component ~send_message in
-  let%sub messages_panel = Messages_panel.component ~messages ~current_room in
+  let%sub messages_panel = Messages_panel.component ~messages ~current_room ~board in
   let%sub username_panel = Compose_username.component ~send_username in
   let%arr rooms_list = rooms_list
   and compose_panel = compose_panel

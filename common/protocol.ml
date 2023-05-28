@@ -62,3 +62,13 @@ module List_rooms = struct
       ~bin_response:[%bin_type_class: Room_name.t List.t]
   ;;
 end
+
+module List_boards = struct
+  let t =
+    Rpc.Rpc.create
+      ~name:"list_boards"
+      ~version:0
+      ~bin_query:[%bin_type_class: unit]
+      ~bin_response:[%bin_type_class: Board.t Room_name.Table.t]
+  ;;
+end

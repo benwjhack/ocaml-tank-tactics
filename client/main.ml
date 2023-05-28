@@ -10,6 +10,11 @@ let run_refresh_rooms ~conn ~rooms_list_var =
   Bonsai.Var.set rooms_list_var rooms
 ;;
 
+let run_refresh_boards ~conn ~boards_list_var =
+  let%map boards = Rpc.Rpc.dispatch_exn Protocol.List_boards.t conn () in
+  Bonsai.Var.set boards_list_var boards
+;;
+
 let refresh_rooms ~conn ~rooms_list_var =
   let dispatch =
     (fun () -> run_refresh_rooms ~conn ~rooms_list_var) |> Effect.of_deferred_fun
@@ -31,9 +36,9 @@ let process_message_stream ~conn ~room_state_var =
     Bonsai.Var.update
       room_state_var
       ~f:(fun ({ Room_name_state.messages; current_room } as prev) ->
-        if [%equal: Room_name.t option] current_room (Some message.room)
-        then { prev with messages = List.append messages [ message ] }
-        else prev);
+      if [%equal: Room_name.t option] current_room (Some message.room)
+      then { prev with messages = List.append messages [ message ] }
+      else prev);
     Deferred.unit)
 ;;
 
@@ -45,8 +50,8 @@ let send_message ~conn =
     Rpc.Rpc.dispatch_exn Protocol.Send_message.t conn
     |> Effect.of_deferred_fun
     >> Effect.bind ~f:(function
-      | Ok a -> Effect.return a
-      | Error _ -> Effect.Ignore)
+         | Ok a -> Effect.return a
+         | Error _ -> Effect.Ignore)
   in
   fun ~room ~contents ->
     let contents = obfuscate contents in
@@ -58,8 +63,8 @@ let send_username ~conn =
     Rpc.Rpc.dispatch_exn Protocol.Send_username.t conn
     |> Effect.of_deferred_fun
     >> Effect.bind ~f:(function
-      | Ok a -> Effect.return a
-      | Error _ -> Effect.Ignore)
+         | Ok a -> Effect.return a
+         | Error _ -> Effect.Ignore)
   in
   fun ~contents ->
     let contents = contents in
@@ -79,6 +84,7 @@ let run () =
   Async_js.init ();
   let%bind conn = Rpc.Connection.client_exn () in
   let rooms_list_var = Bonsai.Var.create [] in
+  let boards_list_var = Bonsai.Var.create (Room_name.Table.create ()) in
   let room_state_var =
     Bonsai.Var.create { Room_name_state.messages = []; current_room = None }
   in
@@ -101,6 +107,7 @@ let run () =
          ~send_username)
   in
   don't_wait_for (run_refresh_rooms ~conn ~rooms_list_var);
+  don't_wait_for (run_refresh_boards ~conn ~boards_list_var);
   don't_wait_for (process_message_stream ~conn ~room_state_var);
   return ()
 ;;

@@ -39,12 +39,10 @@ let create () =
     ]
   in
   let rooms =
-    let open Room in
     let default_room =
       let messages = Queue.of_list initial_messages in
-      let internals = Internals.create ~messages in
       let board = Board.default in
-      Room.create ~internals ~board
+      Room.create ~messages ~board
     in
     Room_name.Table.of_alist_exn
       [ Room_name.of_string "incr_dom-room", default_room

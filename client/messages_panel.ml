@@ -7,16 +7,18 @@ let view_message { Message.room = _; author; contents } =
   Vdom.Node.div [ Vdom.Node.textf "%s: %s" author contents ]
 ;;
 
-let view messages current_room =
+let view messages current_room board =
   Vdom.Node.div
     ~attr:(Vdom.Attr.id "messages-list")
-    [ Vdom.Node.h1 [ Vdom.Node.text (Room.to_string current_room) ]
+    [ Vdom.Node.h1 [ Vdom.Node.text (Room_name.to_string current_room) ]
     ; Vdom.Node.div (List.map messages ~f:view_message)
+    ; Vdom.Node.div [ Vdom.Node.Text (Board.to_string board) ]
     ]
 ;;
 
-let component ~messages ~current_room =
+let component ~messages ~current_room ~board =
   let%arr messages = messages
-  and current_room = current_room in
-  view messages current_room
+  and current_room = current_room
+  and board = board in
+  view messages current_room board
 ;;

@@ -4,8 +4,16 @@ open Tank_tactics_common
 
 type t =
   { message_bus : (Message.t -> unit) Bus.Read_write.t
-  ; messages : Message.t Queue.t Room.Table.t
+  ; rooms : Room.t Room_name.Table.t
   }
+[@@deriving fields]
+
+let messages { rooms; _ } =
+  Room_name.Table.map rooms ~f:(fun room ->
+    room |> Room.internals |> Room.Internals.messages)
+;;
+
+let boards { rooms; _ } = Room_name.Table.map rooms ~f:Room.board
 
 let create () =
   let message_bus =
@@ -17,12 +25,12 @@ let create () =
   in
   let initial_messages =
     [ Message.
-        { room = Room.of_string "incr_dom-room"
+        { room = Room_name.of_string "incr_dom-room"
         ; author = "Bonsai Developers"
         ; contents = "hello world!"
         }
     ; Message.
-        { room = Room.of_string "incr_dom-room"
+        { room = Room_name.of_string "incr_dom-room"
         ; author = "Bonsai Developers"
         ; contents =
             "For deep and complex security purposes your messages will be hashed so that \
@@ -30,11 +38,16 @@ let create () =
         }
     ]
   in
-  let messages =
-    Room.Table.of_alist_exn
-      [ Room.of_string "incr_dom-room", Queue.of_list initial_messages
-      ; Room.of_string "bonsai-room", Queue.of_list initial_messages
+  let rooms =
+    let default_room =
+      let messages = Queue.of_list initial_messages in
+      let board = Board.default in
+      Room.create ~messages ~board
+    in
+    Room_name.Table.of_alist_exn
+      [ Room_name.of_string "incr_dom-room", default_room
+      ; Room_name.of_string "bonsai-room", default_room
       ]
   in
-  { message_bus; messages }
+  { message_bus; rooms }
 ;;

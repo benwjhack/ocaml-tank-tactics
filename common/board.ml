@@ -1,4 +1,5 @@
 open! Core
+open Bonsai_web
 
 module Tile = struct
   type t = { type_ : int } [@@deriving sexp, bin_io, fields]
@@ -29,4 +30,13 @@ let to_string { tiles; _ } =
       Int.to_string type_))
   |> List.map ~f:(String.concat ~sep:",")
   |> String.concat ~sep:"\n"
+;;
+
+let to_html { tiles; _ } =
+  List.map tiles ~f:(fun ys ->
+    List.map ys ~f:(fun tile ->
+      let type_ = Tile.type_of tile in
+      Int.to_string type_))
+  |> List.map ~f:(fun _type -> _type |> String.concat ~sep:"," |> Vdom.Node.Text)
+  |> Vdom.Node.div
 ;;

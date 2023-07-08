@@ -12,7 +12,7 @@ let view messages current_room board =
     ~attr:(Vdom.Attr.id "messages-list")
     [ Vdom.Node.h1 [ Vdom.Node.text (Room_name.to_string current_room) ]
     ; Vdom.Node.div (List.map messages ~f:view_message)
-    ; Vdom.Node.div [ Vdom.Node.Text (Board.to_string board) ]
+    ; Vdom.Node.div [ Board.to_html board ]
     ]
 ;;
 

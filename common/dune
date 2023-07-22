@@ -1,5 +1,10 @@
 (library
  (name tank_tactics_common)
- (libraries core async_kernel async_rpc_kernel bonsai.web)
+ (libraries
+  core
+  async_kernel
+  async_rpc_kernel
+  bonsai.web
+  virtual_dom.input_widgets)
  (preprocess
   (pps ppx_jane)))

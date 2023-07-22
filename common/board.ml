@@ -33,10 +33,13 @@ let to_string { tiles; _ } =
 ;;
 
 let to_html { tiles; _ } =
-  List.map tiles ~f:(fun ys ->
-    List.map ys ~f:(fun tile ->
-      let type_ = Tile.type_of tile in
-      Int.to_string type_))
-  |> List.map ~f:(fun _type -> _type |> String.concat ~sep:"," |> Vdom.Node.Text)
-  |> Vdom.Node.div
+  let v =
+    List.map tiles ~f:(fun ys ->
+      List.map ys ~f:(fun tile ->
+        let type_ = Tile.type_of tile in
+        Int.to_string type_))
+    |> List.map ~f:(fun _type -> _type |> String.concat ~sep:"," |> Vdom.Node.Text)
+  in
+  ignore (v : Vdom.Node.t list);
+  Vdom.Node.body v
 ;;

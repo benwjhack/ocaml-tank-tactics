@@ -1,7 +1,11 @@
 open! Core
 
 module Tile = struct
-  type t = { type_ : int } [@@deriving sexp, bin_io, fields]
+  module Type = struct
+    type t = int [@@deriving sexp, bin_io]
+  end
+
+  type t = { type_ : Type.t } [@@deriving sexp, bin_io, fields]
 
   let type_of { type_; _ } = type_
 end
@@ -30,3 +34,5 @@ let to_string { tiles; _ } =
   |> List.map ~f:(String.concat ~sep:",")
   |> String.concat ~sep:"\n"
 ;;
+
+let tiles { tiles; _ } = tiles

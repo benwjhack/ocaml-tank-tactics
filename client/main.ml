@@ -7,14 +7,7 @@ open Composition_infix
 
 let run_refresh_rooms ~conn ~rooms_list_var =
   let%map rooms = Rpc.Rpc.dispatch_exn Protocol.List_rooms.t conn () in
-  let rooms = Map.keys rooms in
   Bonsai.Var.set rooms_list_var rooms
-;;
-
-let run_refresh_boards ~conn ~boards_list_var =
-  let%map rooms = Rpc.Rpc.dispatch_exn Protocol.List_rooms.t conn () in
-  let boards = Map.map ~f:Room.Externals.board rooms in
-  Bonsai.Var.set boards_list_var boards
 ;;
 
 let refresh_rooms ~conn ~rooms_list_var =
@@ -85,8 +78,7 @@ let change_room ~conn ~room_state_var =
 let run () =
   Async_js.init ();
   let%bind conn = Rpc.Connection.client_exn () in
-  let rooms_list_var = Bonsai.Var.create [] in
-  let boards_list_var = Bonsai.Var.create Room_name.Map.empty in
+  let rooms_list_var = Bonsai.Var.create Room_name.Map.empty in
   let room_state_var =
     Bonsai.Var.create { Room_name_state.messages = []; current_room = None }
   in
@@ -101,7 +93,6 @@ let run () =
       (let open Bonsai.Let_syntax in
        App.component
          ~room_list:(Bonsai.Var.value rooms_list_var)
-         ~board_list:(Bonsai.Var.value boards_list_var)
          ~current_room:(Room_name_state.current_room <$> Bonsai.Var.value room_state_var)
          ~messages:(Room_name_state.messages <$> Bonsai.Var.value room_state_var)
          ~refresh_rooms
@@ -110,7 +101,6 @@ let run () =
          ~send_username)
   in
   don't_wait_for (run_refresh_rooms ~conn ~rooms_list_var);
-  don't_wait_for (run_refresh_boards ~conn ~boards_list_var);
   don't_wait_for (process_message_stream ~conn ~room_state_var);
   return ()
 ;;

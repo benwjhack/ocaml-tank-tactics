@@ -3,8 +3,7 @@ open! Bonsai_web
 open Tank_tactics_common
 
 val component
-  :  room_list:Room_name.t list Value.t
-  -> board_list:Board.t Room_name.Map.t Value.t
+  :  room_list:Room.Externals.t Room_name.Map.t Value.t
   -> current_room:Room_name.t option Value.t
   -> messages:Message.t list Value.t
   -> refresh_rooms:unit Effect.t

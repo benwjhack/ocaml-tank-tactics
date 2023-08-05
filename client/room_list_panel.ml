@@ -5,6 +5,7 @@ open Bonsai.Let_syntax
 
 let component ~room_list ~refresh_rooms ~change_room =
   let%arr room_list = room_list in
+  let room_list = Room_name.Map.keys room_list in
   let room_header =
     Vdom.Node.h2
       [ Vdom.Node.text "Room_names"

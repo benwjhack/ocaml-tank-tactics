@@ -4,7 +4,6 @@ open Tank_tactics_common
 
 let component
   ~room_list
-  ~board_list
   ~current_room
   ~messages
   ~refresh_rooms
@@ -29,8 +28,10 @@ let component
   in
   let%sub board =
     let%arr current_room = current_room
-    and board_list = board_list in
-    Room_name.Map.find board_list current_room |> Option.value ~default:Board.empty
+    and room_list = room_list in
+    Room_name.Map.find room_list current_room
+    |> Option.map ~f:Room.Externals.board
+    |> Option.value ~default:Board.empty
   in
   let%sub rooms_list = Room_list_panel.component ~room_list ~refresh_rooms ~change_room in
   let%sub compose_panel = Compose_message.component ~send_message in

@@ -1,8 +1,15 @@
-(library (name tank_tactics_native)
- (libraries async_extra.async_bus tank_tactics_common
-  async_rpc_websocket cohttp-async)
- (preprocess (pps ppx_jane)))
+(library
+ (name tank_tactics_native)
+ (libraries
+  async_extra.async_bus
+  tank_tactics_common
+  async_rpc_websocket
+  cohttp-async)
+ (preprocess
+  (pps ppx_jane)))
 
-(rule (targets embedded_files.ml embedded_files.mli)
+(rule
+ (targets embedded_files.ml embedded_files.mli)
  (deps ../../client/main.bc.js ../../client/style.css)
- (action (bash "%{bin:ocaml-embed-file} %{deps} -output embedded_files")))
+ (action
+  (bash "%{bin:ocaml-embed-file} %{deps} -output embedded_files")))

@@ -1,0 +1,11 @@
+(executables
+ (names main)
+ (libraries
+  async
+  async_kernel
+  core_kernel.composition_infix
+  core
+  core_unix.command_unix
+  tank_tactics_common)
+ (preprocess
+  (pps js_of_ocaml-ppx ppx_jane)))

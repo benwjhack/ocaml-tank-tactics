@@ -36,11 +36,11 @@ let make_command ~f =
 let list_rooms_command =
   make_command ~f:(fun conn ->
     let%map response = Rpc.Rpc.dispatch List_rooms.t conn () in
-    Sexp.pp
-      Format.std_formatter
+    Sexp.to_string_hum
       [%sexp
         (response
-          : Tank_tactics_common.Room.Externals.t Tank_tactics_common.Room_name.Map.t)])
+          : Tank_tactics_common.Room.Externals.t Tank_tactics_common.Room_name.Map.t)]
+    |> print_endline)
 ;;
 
 let command = Command.group ~summary:"TODO" [ "list-rooms", list_rooms_command ]

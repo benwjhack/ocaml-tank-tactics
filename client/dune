@@ -1,4 +1,5 @@
 (executables
+ (modes js)
  (names main)
  (libraries
   async_kernel

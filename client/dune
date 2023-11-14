@@ -1,4 +1,13 @@
-(executables (names main)
- (libraries async_kernel async_js core_kernel.composition_infix core
-  bonsai.web tank_tactics_common virtual_dom.input_widgets)
- (preprocess (pps js_of_ocaml-ppx ppx_jane)))
+(executables
+ (names main)
+ (libraries
+  async_kernel
+  async_js
+  core_kernel.composition_infix
+  core
+  bonsai.web
+  tank_tactics_common
+  virtual_dom.input_widgets
+  tank_tactics_common_renderers)
+ (preprocess
+  (pps js_of_ocaml-ppx ppx_jane)))

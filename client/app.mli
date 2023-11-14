@@ -1,5 +1,13 @@
 open! Core
 open! Bonsai_web
-open! Tank_tactics_common
+open Tank_tactics_common
 
-val component : board:Board.t Value.t -> Vdom.Node.t Computation.t
+val component
+  :  room_list:Room.Externals.t Room_name.Map.t Value.t
+  -> current_room:Room_name.t option Value.t
+  -> messages:Message.t list Value.t
+  -> refresh_rooms:unit Effect.t
+  -> change_room:(Room_name.t -> unit Effect.t)
+  -> send_message:(room:Room_name.t -> contents:string -> unit Effect.t)
+  -> send_username:(contents:string -> unit Effect.t)
+  -> Vdom.Node.t Computation.t

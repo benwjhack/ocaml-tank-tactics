@@ -59,6 +59,7 @@ let main ~port =
   let global_state = Global_state.create () in
   let hostname = Unix.gethostname () in
   printf "Serving http://%s:%d/\n%!" hostname port;
+  let implementations = Rpc_implementations.implementations global_state in
   let%bind server =
     let http_handler () = handler in
     Rpc_websocket.Rpc.serve
@@ -66,11 +67,19 @@ let main ~port =
       ~mode:`TCP
       ~where_to_listen:(Tcp.Where_to_listen.of_port port)
       ~http_handler
-      ~implementations:(Rpc_implementations.implementations global_state)
+      ~implementations
       ~initial_connection_state:initialize_connection
       ()
+  and cli_server =
+    Rpc.Connection.serve
+      ~where_to_listen:(Tcp.Where_to_listen.of_port 1984)
+      ~initial_connection_state:(fun _ -> initialize_connection () () ())
+      ~implementations
+      ()
   in
-  Cohttp_async.Server.close_finished server
+  let%map.Deferred () = Cohttp_async.Server.close_finished server
+  and () = Tcp.Server.close_finished_and_handlers_determined cli_server in
+  ()
 ;;
 
 let command =

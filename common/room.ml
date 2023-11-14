@@ -45,7 +45,8 @@ let%expect_test "sexp" =
   and users = [ User.create () ] in
   let example = create ~messages ~board ~users in
   print_s [%sexp (example : t)];
-  [%expect {|
+  [%expect
+    {|
     ((internals
       ((messages (((room this_room) (author me!) (contents "message contents"))))
        (users (()))))

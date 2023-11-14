@@ -1,0 +1,9 @@
+(rule
+ (targets .started)
+ (deps %{workspace_root}/server/bin/main.exe)
+ (action
+  (system "%{deps} && date > %{targets}")))
+
+(alias
+ (name DEFAULT)
+ (deps .started))

@@ -10,9 +10,9 @@ let build_result send_username (textbox_content, set_textbox_content) =
       String.equal
         "Enter"
         (key##.code
-        |> Js_of_ocaml.Js.Optdef.to_option
-        |> Option.value_exn
-        |> Js_of_ocaml.Js.to_string)
+         |> Js_of_ocaml.Js.Optdef.to_option
+         |> Option.value_exn
+         |> Js_of_ocaml.Js.to_string)
     in
     Vdom.Attr.on_keypress (fun key ->
       if is_key_ret key then submit_and_then_clear else Vdom.Effect.Ignore)

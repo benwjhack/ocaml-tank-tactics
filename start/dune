@@ -1,9 +1,11 @@
 (rule
- (targets .started)
+ (targets server.pid)
+ (mode promote)
  (deps %{workspace_root}/server/bin/main.exe)
  (action
-  (system "%{deps} && date > %{targets}")))
+  (bash
+   "if [ -f /tmp/server.pid ]; then kill -9 $(cat /tmp/server.pid); rm server.pid; fi; (%{deps} & echo $! > server.pid; cp server.pid /tmp/)")))
 
 (alias
  (name DEFAULT)
- (deps .started))
+ (deps server.pid))
